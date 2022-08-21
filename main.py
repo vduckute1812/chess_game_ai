@@ -1,6 +1,8 @@
 
-from Piece.objects.Piece import King
+from Board.Piece.objects.Piece import King
 
 king = King()
 
-king.get_generating_moves()
+king.set_position(3,2)
+
+print(king.get_position())

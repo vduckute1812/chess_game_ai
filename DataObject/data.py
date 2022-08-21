@@ -1,11 +1,4 @@
 class Position():
-    def __init__():
-        x: int = 0
-        y: int = 0
-
-    def get_position(self) -> tuple:
-        return (x, y)
-    
-    def set_position(self, x: int, y: int):
-        self.x = x
-        self.y = y
+    def __init__(self, x: int = 0, y: int = 0):
+        self.x: int = x
+        self.y: int = y
