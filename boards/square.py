@@ -1,9 +1,10 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional, TYPE_CHECKING
 
 import pygame
 
 from boards.constant import BOARD_COLUMNS, SQUARE_COLOR_MAP, HIGH_LIGHT_SQUARE_COLOR_MAP, Color
-from pieces.piece import Piece
+if TYPE_CHECKING:
+    from pieces.piece import Piece
 
 
 class Square:
@@ -18,14 +19,14 @@ class Square:
     def set_highlight(self, highlight: bool):
         self._highlight = highlight
 
-    def set_piece(self, piece: Piece):
+    def set_piece(self, piece: "Piece"):
         self._occupying_piece = piece
 
-    def get_piece(self) -> Optional[Piece]:
+    def get_piece(self) -> Optional["Piece"]:
         return self._occupying_piece
 
     def is_occupied(self) -> bool:
-        return self._occupying_piece is not None
+        return bool(self._occupying_piece)
 
     @property
     def color(self) -> int:
@@ -39,6 +40,9 @@ class Square:
     def position(self) -> Tuple[int, int]:
         return self._x, self._y
 
+    def get_size(self) -> Tuple[int, int]:
+        return self._width, self._height
+
     def _rendered_color(self) -> Tuple[int, int, int]:
         return self._highlight_color() if self._highlight else self._draw_color()
 
@@ -50,7 +54,6 @@ class Square:
 
     def _highlight_color(self) -> Tuple[int, int, int]:
         return HIGH_LIGHT_SQUARE_COLOR_MAP[self.color]
-
 
     def draw(self, display):
         abs_x = self._x * self._width
@@ -64,7 +67,4 @@ class Square:
         # Render tile
         pygame.draw.rect(display, self._rendered_color(), rect)
         # Render piece
-        if self._occupying_piece:
-            centering_rect = self._occupying_piece.img.get_rect()
-            centering_rect.center = rect.center
-            display.blit(self._occupying_piece.img, centering_rect.topleft)
+        self._occupying_piece and self._occupying_piece.draw(display, rect)

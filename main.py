@@ -1,13 +1,11 @@
 import pygame
 
 from boards.board import Board
+from boards.constant import WINDOW_SIZE
+from controller.board_controller import BoardController
+from pieces.contants import Alliance
+from pieces.pawn import Pawn
 
-pygame.init()
-
-WINDOW_SIZE = (600, 600)
-screen = pygame.display.set_mode(WINDOW_SIZE)
-
-board = Board(WINDOW_SIZE[0], WINDOW_SIZE[1])
 
 def draw(display):
     display.fill('white')
@@ -16,6 +14,10 @@ def draw(display):
 
 
 if __name__ == '__main__':
+    pygame.init()
+    screen = pygame.display.set_mode(WINDOW_SIZE)
+    board = Board()
+    controller = BoardController(board)
     running = True
     while running:
         draw(screen)

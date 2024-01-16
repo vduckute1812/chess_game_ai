@@ -1,21 +1,19 @@
 from typing import Tuple
+import pygame
+from boards.constant import WINDOW_SIZE
 
 
 class Piece:
-    def __init__(self, x: int, y: int, alliance: int):
-        self._x = x
-        self._y = y
+    def __init__(self, alliance: int):
+        self._tile_width, self._tile_height = WINDOW_SIZE[0] // 8, WINDOW_SIZE[1] // 8
         self._alliance = alliance
-
-    def get_pos(self) -> Tuple[int, int]:
-        return self._x, self._y
+        self._img = None
 
     @property
-    def color(self) -> int:
+    def alliance(self) -> int:
         return self._alliance
 
-    def move(self) -> bool:
-        return True
-
-    def draw(self, display):
-        pass
+    def draw(self, display, rect):
+        centering_rect = self._img.get_rect()
+        centering_rect.center = rect.center
+        display.blit(self._img, centering_rect.topleft)
