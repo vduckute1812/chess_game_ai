@@ -19,7 +19,7 @@ class Square:
     def set_highlight(self, highlight: bool):
         self._highlight = highlight
 
-    def set_piece(self, piece: "Piece"):
+    def set_piece(self, piece: Optional["Piece"]):
         self._occupying_piece = piece
 
     def get_piece(self) -> Optional["Piece"]:
@@ -58,12 +58,7 @@ class Square:
     def draw(self, display):
         abs_x = self._x * self._width
         abs_y = self._y * self._height
-        rect = pygame.Rect(
-            abs_x,
-            abs_y,
-            self._width,
-            self._height
-        )
+        rect = pygame.Rect(abs_x, abs_y, self._width, self._height)
         # Render tile
         pygame.draw.rect(display, self._rendered_color(), rect)
         # Render piece

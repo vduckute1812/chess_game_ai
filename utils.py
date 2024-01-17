@@ -1,8 +1,9 @@
-from typing import Tuple, TYPE_CHECKING
-
-from boards.constant import BOARD_COLUMNS
-from pieces.bishop import Bishop
+from typing import TYPE_CHECKING, Type, Tuple
+import pygame
+from boards.constant import BOARD_COLUMNS, WINDOW_SIZE
+from constant import ASSETS_DIR
 from pieces.contants import PIECE_TYPE_MAP, Alliance, PieceType
+from pieces.bishop import Bishop
 from pieces.king import King
 from pieces.knight import Knight
 from pieces.pawn import Pawn
@@ -14,8 +15,9 @@ if TYPE_CHECKING:
     from boards.board import Board
 
 
+
 class Utils:
-    PIECE_TYPE_MAP = {
+    PIECE_TYPE_OBJ_MAP = {
         PieceType.PAWN: Pawn,
         PieceType.BISHOP: Bishop,
         PieceType.ROOK: Rook,
@@ -25,14 +27,24 @@ class Utils:
     }
 
     @classmethod
-    def generate_piece_by_key(cls, piece_key: str) -> Piece:
+    def generate_piece_by_key(cls, piece_key: str) -> Tuple[Type[Piece], int]:
         alliance_notation, piece_type_str = piece_key[0], piece_key[1]
         piece_type = PIECE_TYPE_MAP.get(piece_type_str)
         alliance = Alliance.to_value(alliance_notation)
-        return cls.PIECE_TYPE_MAP.get(piece_type, Piece)(alliance)
+        return cls.PIECE_TYPE_OBJ_MAP.get(piece_type, Piece), alliance
 
     @classmethod
-    def set_init_board(cls, board: "Board"):
+    def generate_piece_img(cls, piece_type: int, alliance: int):
+        tile_width, tile_height = WINDOW_SIZE[0] // 8, WINDOW_SIZE[1] // 8
+        piece_type = {v: k for k, v in PIECE_TYPE_MAP.items()}.get(piece_type, "")
+        if piece_type:
+            img_path = ASSETS_DIR + Alliance.to_notation(alliance) + '_' + piece_type + '.png'
+            img = pygame.image.load(img_path)
+            img = pygame.transform.scale(img, (tile_width - 35, tile_height - 35))
+            return img
+
+    @classmethod
+    def set_init_board(cls, board: "Board"):    # Factory method
         init_config = {
             "wR": "a1 h1",
             "wK": "b1 g1",
@@ -49,7 +61,16 @@ class Utils:
         }
         tiles = board.get_board_tiles()
         for piece_key, positions in init_config.items():
-            piece = Utils.generate_piece_by_key(piece_key)
+            piece_cls, alliance = cls.generate_piece_by_key(piece_key)
             for position in positions.split(" "):
                 row, col = int(position[1]) - 1, BOARD_COLUMNS.index(position[0])
-                tiles[row][col].set_piece(piece)
+                piece_obj = piece_cls(alliance)
+                piece_obj.set_square_index(row * 8 + col)
+                tiles[row][col].set_piece(piece_obj)
+
+    @classmethod
+    def extract_piece_key(cls, mx: int, my: int) -> Tuple[int, int]:
+        tile_width, tile_height = WINDOW_SIZE[0] // 8, WINDOW_SIZE[1] // 8
+        col = mx // tile_width
+        row = my // tile_height
+        return row, col

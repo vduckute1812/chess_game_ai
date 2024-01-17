@@ -30,9 +30,6 @@ class Board:
     def get_square(self, row: int, col: int):
         return self._board[row][col]
 
-    def get_board_size(self) -> Tuple[int, int]:
-        return self._width, self._height
-
     def draw(self, display):
         for squares in self._board:
             for square in squares:
