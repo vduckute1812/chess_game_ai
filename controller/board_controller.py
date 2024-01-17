@@ -4,15 +4,18 @@ from boards.board import Board
 from boards.square import Square
 from pieces.contants import Alliance
 from pieces.piece import Piece
+from singleton import Singleton
 from utils import Utils
 
 
-class BoardController:  # TODO: Bridge pattern
-    def __init__(self, board: Board):
-        self._board_tiles: List[List[Square]] = board.get_board_tiles()
+class BoardController(Singleton):  # TODO: Bridge pattern
+    def __init__(self):
         self._turn: int = Alliance.WHITE
         self._running = True
         self._selected_piece: Optional[Piece] = None
+
+    def set_board(self, board):
+        self._board_tiles: List[List[Square]] = board.get_board_tiles()
 
     def get_square(self, piece: Piece) -> Square:
         row, col = piece.to_position()
@@ -45,11 +48,11 @@ class BoardController:  # TODO: Bridge pattern
         if self.has_selected_piece():
             self.get_square(self._selected_piece).set_piece(None)
             self.set_piece(self._selected_piece, row, col)
-        self.change_turn()
-        self.set_selected_piece(None)
+            self.change_turn()
+            self.set_selected_piece(None)
 
     def handle_click(self, mx: int, my: int):
-        row, col = Utils.extract_piece_key(mx, my)
+        row, col = Utils.coord_to_position(mx, my)
         occupied_piece = self.get_piece(row, col)
         if occupied_piece and self.is_same_alliance(occupied_piece):
             self.set_selected_piece(occupied_piece)
@@ -61,3 +64,6 @@ class BoardController:  # TODO: Bridge pattern
 
     def force_quit(self):
         self._running = False
+
+    def move_piece(self, moved_coord: int, target_coord: int):
+        pass

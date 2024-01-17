@@ -69,8 +69,12 @@ class Utils:
                 tiles[row][col].set_piece(piece_obj)
 
     @classmethod
-    def extract_piece_key(cls, mx: int, my: int) -> Tuple[int, int]:
+    def coord_to_position(cls, mx: int, my: int) -> Tuple[int, int]:
         tile_width, tile_height = WINDOW_SIZE[0] // 8, WINDOW_SIZE[1] // 8
         col = mx // tile_width
         row = my // tile_height
         return row, col
+
+    @classmethod
+    def position_to_index(cls, row: int, col: int) -> int:
+        return row * 8 + col

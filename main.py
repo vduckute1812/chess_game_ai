@@ -15,7 +15,8 @@ if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)
     board = Board()
-    controller = BoardController(board)
+    controller = BoardController()
+    controller.set_board(board)
     event_processor = EventProcessor()
     while controller.is_running():
         event_processor.process(controller)
