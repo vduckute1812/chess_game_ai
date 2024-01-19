@@ -5,8 +5,6 @@ from boards.constant import WINDOW_SIZE
 from controller.board_controller import BoardController
 from events.event_processor import EventProcessor
 
-
-
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)

@@ -17,38 +17,15 @@ class BoardController(Singleton):  # TODO: Bridge pattern
     def get_board(self) -> Board:
         return self._board
 
-    def _change_turn(self):
-        if Alliance.is_black(self._turn):
-            self._turn = Alliance.WHITE
-        else:
-            self._turn = Alliance.BLACK
-
-    def _has_selected_piece(self):
-        return bool(self._selected_piece)
-
-    def _set_selected_piece(self, piece: Optional[Piece]):
-        self._selected_piece = piece
-
-    def is_same_alliance(self, piece: Piece) -> bool:
-        return bool(piece and self._turn == piece.alliance)
-
-    def set_piece(self, piece: Piece, index: int):
+    def set_piece(self, piece: Optional[Piece], index: int):
         self._board.set_piece(piece, index)
-
-    def _move(self, moved_index: int) -> Move:
-        selected_index = self._selected_piece.get_square_index()
-        self.set_piece(None, selected_index)
-        self.set_piece(self._selected_piece, moved_index)
-        self._set_selected_piece(None)
-        self._change_turn()
-        return Move(MoveType.NORMAL, selected_index, moved_index)
 
     def handle_move_event(self, mx: int, my: int) -> Optional[Move]:
         move = None
         row, col = Utils.coord_to_position(mx, my)
         index = row * 8 + col
         occupied_piece = self._board.get_piece(index)
-        if occupied_piece and self.is_same_alliance(occupied_piece):
+        if occupied_piece and self._is_same_alliance(occupied_piece):
             self._set_selected_piece(occupied_piece)
         elif self._has_selected_piece() and not occupied_piece:
             move = self._move(index)
@@ -61,7 +38,26 @@ class BoardController(Singleton):  # TODO: Bridge pattern
         self._running = False
 
     def move_piece(self, moved_coord: int, target_coord: int):
-        occupied_piece = self._board.get_piece(moved_coord)
-        self._selected_piece = occupied_piece
+        self._selected_piece = self._board.get_piece(moved_coord)
         if self._selected_piece:
             self._move(target_coord)
+
+    def _change_turn(self):
+        self._turn = Alliance.WHITE if Alliance.is_black(self._turn) else Alliance.BLACK
+
+    def _has_selected_piece(self):
+        return bool(self._selected_piece)
+
+    def _set_selected_piece(self, piece: Optional[Piece]):
+        self._selected_piece = piece
+
+    def _is_same_alliance(self, piece: Piece) -> bool:
+        return bool(piece and self._turn == piece.alliance)
+
+    def _move(self, moved_index: int) -> Move:
+        selected_index = self._selected_piece.get_square_index()
+        self.set_piece(None, selected_index)
+        self.set_piece(self._selected_piece, moved_index)
+        self._set_selected_piece(None)
+        self._change_turn()
+        return Move(MoveType.NORMAL, selected_index, moved_index)

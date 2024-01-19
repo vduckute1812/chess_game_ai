@@ -3,12 +3,15 @@ from typing import Optional, List
 import pygame
 
 from boards.square import Square
+from observer.constant import MessageType
+from observer.observer import Observer
 from pieces.piece import Piece
 from utils import Utils
 
 
-class Board:
+class Board (Observer):
     def __init__(self):
+        super().__init__()
         self._squares = Utils.set_init_board()
 
     def _get_square(self, index: int) -> Square:
@@ -22,6 +25,9 @@ class Board:
         if piece:
             piece.set_square_index(index)
         self._get_square(index).set_piece(piece)
+
+    def on_message_received(self, msg: type[MessageType]):
+        pass
 
     def draw(self, display: pygame.Surface):
         display.fill('white')

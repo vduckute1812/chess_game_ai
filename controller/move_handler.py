@@ -1,5 +1,4 @@
 from controller.board_controller import BoardController
-from controller.constant import MoveType
 from controller.move import Move
 from singleton import Singleton
 

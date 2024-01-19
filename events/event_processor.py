@@ -7,8 +7,8 @@ from events.event_handler import EventHandler
 
 
 class EventProcessor(BaseEvent):  # TODO: Composite pattern
-    def __init__(self, _type: int = EventHandlerType.UNKNOWN):
-        super().__init__(_type)
+    def __init__(self):
+        super().__init__()
         self._events: List[BaseEvent] = []
 
     def add(self, event: BaseEvent):

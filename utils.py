@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import TYPE_CHECKING, Type, Tuple, List, Dict
+from typing import Type, Tuple, List, Dict
 import pygame
 from boards.constant import WINDOW_SIZE
 from boards.square import Square
@@ -12,9 +12,6 @@ from pieces.pawn import Pawn
 from pieces.piece import Piece
 from pieces.queen import Queen
 from pieces.rook import Rook
-
-if TYPE_CHECKING:
-    from boards.board import Board
 
 
 
@@ -65,7 +62,7 @@ class Utils:
         return row * 8 + col
 
     @classmethod
-    def set_init_board(cls) -> List[Square]:    # Factory method
+    def set_init_board(cls) -> List[Square]:  # Factory method
         squares = cls.generate_squares()
         piece_img_map = cls.generate_piece_img_map()
         for piece_type, positions in BOARD_CONFIG.items():
