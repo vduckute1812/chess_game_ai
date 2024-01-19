@@ -4,4 +4,5 @@ class EventHandlerType:
     MOUSE_CLICK = 1
     # Game event
     QUIT = 2
-    BACK = 3
+    UNDO = 3
+    REDO = 4

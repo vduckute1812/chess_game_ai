@@ -1,12 +1,9 @@
 from typing import List
 
 import pygame
-
-from controller.board_controller import BoardController
 from events.base import BaseEvent
 from events.constant import EventHandlerType
-from events.game_event import GameEvent
-from events.mouse_event import MouseEvent
+from events.event_handler import EventHandler
 
 
 class EventProcessor(BaseEvent):  # TODO: Composite pattern
@@ -21,15 +18,19 @@ class EventProcessor(BaseEvent):  # TODO: Composite pattern
         # Process the event
         for event in pygame.event.get():
             if self.is_quit(event):
-                self.add(GameEvent(EventHandlerType.QUIT))
+                self.add(EventHandler(EventHandlerType.QUIT))
             elif self.is_click(event):
-                self.add(MouseEvent(EventHandlerType.MOUSE_CLICK, event.pos))
+                self.add(EventHandler(EventHandlerType.MOUSE_CLICK, event.pos))
+            elif self.is_undo(event):
+                self.add(EventHandler(EventHandlerType.UNDO))
+            elif self.is_redo(event):
+                self.add(EventHandler(EventHandlerType.REDO))
 
-    def process(self, controller):
+    def process(self):
         self.collect_events()
         while self._events:
             event = self._events.pop(0) # FIFO
-            event.process(controller)
+            event.process()
 
     @staticmethod
     def is_quit(event) -> bool:
@@ -38,3 +39,11 @@ class EventProcessor(BaseEvent):  # TODO: Composite pattern
     @staticmethod
     def is_click(event):
         return event.type == pygame.MOUSEBUTTONDOWN and event.button == 1
+
+    @staticmethod
+    def is_undo(event):
+        return event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT
+
+    @staticmethod
+    def is_redo(event):
+        return event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT

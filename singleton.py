@@ -1,11 +1,7 @@
-from controller.move import Move
-
-
-class Singleton(object):  # TODO: Singleton pattern
+class Singleton:
     _instance = None
-    _move_history = []
-
-    def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls._instance = super(Singleton, cls).__new__(cls)
-        return cls._instance
+    def __new__(self, *args, **kwargs):
+        if not isinstance(self._instance, self):
+            self._instance = object.__new__(self, *args, **kwargs)
+            print(id(self._instance))
+        return self._instance

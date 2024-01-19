@@ -1,5 +1,3 @@
-BOARD_COLUMNS = 'abcdefgh'
-
 class Color:
     WHITE = 1
     BLACK = 2
@@ -16,3 +14,25 @@ HIGH_LIGHT_SQUARE_COLOR_MAP = {
 }
 
 WINDOW_SIZE = (600, 600)
+
+
+class Alliance:
+    WHITE = 0
+    BLACK = 1
+    BOTH = 2
+
+    @classmethod
+    def is_black(cls, alliance: int) -> bool:
+        return alliance == cls.BLACK
+
+    @classmethod
+    def is_white(cls, alliance: int) -> bool:
+        return alliance == cls.WHITE
+
+    @classmethod
+    def is_same(cls, alliance1: int, alliance2: int) -> bool:
+        return alliance1 == alliance2
+
+    @classmethod
+    def is_opposite(cls, alliance1: int, alliance2: int) -> bool:
+        return not cls.is_same(alliance1, alliance2)
