@@ -2,7 +2,7 @@ from typing import Tuple, Optional, TYPE_CHECKING
 
 import pygame
 
-from boards.constant import SQUARE_COLOR_MAP, HIGH_LIGHT_SQUARE_COLOR_MAP, Color
+from boards.constant import SQUARE_COLOR_MAP, HIGH_LIGHT_SQUARE_COLOR_MAP, Color, ATTACK_SQUARE_COLOR_MAP
 from observer.constant import MessageType
 from observer.listener import Listener
 from observer.observer import Observer
@@ -33,8 +33,16 @@ class Square:
         return Color.BLACK if self._is_dark() else Color.WHITE
 
     @property
+    def index(self) -> int:
+        return self._index
+
     def _rendered_color(self) -> Tuple[int, int, int]:
-        return self._highlight_color() if self._highlight else self._draw_color()
+        if self._highlight and self._occupying_piece:
+            return self._attack_color()
+        elif self._highlight:
+            return self._highlight_color()
+        else:
+            return self._draw_color()
 
     def _is_dark(self) -> bool:
         return bool((self._index // 8 + self._index % 8) % 2)
@@ -44,6 +52,9 @@ class Square:
 
     def _highlight_color(self) -> Tuple[int, int, int]:
         return HIGH_LIGHT_SQUARE_COLOR_MAP[self.color]
+
+    def _attack_color(self) -> Tuple[int, int, int]:
+        return ATTACK_SQUARE_COLOR_MAP[self.color]
 
     def to_coordinate(self) -> Tuple[int, int]:
         row = self._index // 8
@@ -56,6 +67,6 @@ class Square:
         abs_y = row * self._height
         rect = pygame.Rect(abs_x, abs_y, self._width,
                            self._height)
-        pygame.draw.rect(display, self._rendered_color, rect)
+        pygame.draw.rect(display, self._rendered_color(), rect)
         self._occupying_piece and self._occupying_piece.draw(display, rect)
 

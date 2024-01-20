@@ -12,12 +12,12 @@ class MoveHandler(Singleton):
     def undo(cls, move: MoveHistory):
         BoardController().move_piece(move.target_index, move.moved_index)
         BoardController().set_piece(move.target_piece, move.target_index)
-        Observer().send(msg=MessageType.BOARD_CHANGED)
+        Observer().send(msg=MessageType.MOVE_MADE, selected_indexes=[move.moved_index, move.target_index])
 
     @classmethod
     def redo(cls, move: MoveHistory):
         BoardController().move_piece(move.moved_index, move.target_index)
-        Observer().send(msg=MessageType.BOARD_CHANGED)
+        Observer().send(msg=MessageType.MOVE_MADE, selected_indexes=[move.moved_index, move.target_index])
 
     def handle_attack_move(self):
         pass

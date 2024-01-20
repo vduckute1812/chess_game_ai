@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 import pygame
 
@@ -32,6 +32,13 @@ class Board(Listener):
         piece and piece.set_square_index(index)
         self._get_square(index).set_piece(piece)
 
+    def to_board_config(self) -> Dict[int, List[int]]:
+        config = {}
+        for square in self._squares:
+            piece = square.get_piece()
+            piece and config.setdefault(piece.piece_type, []).append(square.index)
+        return config
+
     def set_highlight(self, selected_indexes: List[int], highlight: bool = True):
         for index in selected_indexes:
             self._get_square(index).set_highlight(highlight)
@@ -40,10 +47,11 @@ class Board(Listener):
         self, msg: int, selected_squares: Optional[List[int]] = None, **kwargs
     ):
         selected_squares = selected_squares or []
-        if MessageType.is_init_board(msg):
-            self.draw()
-        if MessageType.is_square_highlight(msg):
-            self.update_squares(selected_squares)
+        match msg:
+            case MessageType.INIT_BOARD | MessageType.BOARD_CHANGED:
+                self.draw()
+            case MessageType.SQUARE_HIGHLIGHT | MessageType.MOVE_MADE:
+                self.update_squares(selected_squares)
 
     def draw(self):
         self._screen.fill('white')

@@ -9,4 +9,4 @@ class Pawn(Piece):
         self._directions = [8, 7, 9]
 
     def get_valid_moves(self):
-        return []
+        return [], []

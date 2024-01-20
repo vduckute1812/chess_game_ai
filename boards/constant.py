@@ -13,6 +13,11 @@ HIGH_LIGHT_SQUARE_COLOR_MAP = {
     Color.BLACK: (0, 228, 10),
 }
 
+ATTACK_SQUARE_COLOR_MAP = {
+    Color.WHITE: (255, 51, 133),
+    Color.BLACK: (255, 0, 102),
+}
+
 WINDOW_SIZE = (600, 600)
 
 

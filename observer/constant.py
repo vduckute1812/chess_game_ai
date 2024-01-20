@@ -7,6 +7,10 @@ class MessageType:
     SQUARE_HIGHLIGHT = 5
 
     @classmethod
+    def is_move_made(cls, msg_type: int):
+        return msg_type == cls.MOVE_MADE
+
+    @classmethod
     def is_board_change(cls, msg_type: int):
         return msg_type == cls.BOARD_CHANGED
 

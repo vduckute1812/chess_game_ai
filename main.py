@@ -1,7 +1,6 @@
 import pygame
 
 from boards.board import Board
-from boards.constant import WINDOW_SIZE
 from controller.board_controller import BoardController
 from events.event_processor import EventProcessor
 
