@@ -7,7 +7,6 @@ from events.event_processor import EventProcessor
 
 if __name__ == '__main__':
     pygame.init()
-    screen = pygame.display.set_mode(WINDOW_SIZE)
     controller = BoardController()
     controller.set_board(board=Board())
     event_processor = EventProcessor()

@@ -1,6 +1,9 @@
-from typing import Optional
+from typing import Optional, List
+
+import pygame
+
 from boards.board import Board
-from boards.constant import Alliance
+from boards.constant import Alliance, WINDOW_SIZE
 from controller.constant import MoveType
 from controller.move_history import MoveHistory
 from observer.constant import MessageType
@@ -16,7 +19,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
     _selected_piece: Optional[Piece] = None
     _board: Optional[Board] = None
 
-    def set_board(self, board):
+    def set_board(self, board: Board):
         self._board = board
         Observer().send(msg=MessageType.INIT_BOARD)
 
@@ -30,10 +33,10 @@ class BoardController(Singleton):  # TODO: Bridge pattern
         occupied_piece = self._board.get_piece(target_index)
         if self._is_same_alliance(occupied_piece):
             self._set_selected_piece(occupied_piece)
-        elif self._has_selected_piece() and occupied_piece:
-            move = self._handle_attack(target_index, occupied_piece)
+            self._set_highlight([target_index], highlight=True)
+            Observer().send(msg=MessageType.SQUARE_HIGHLIGHT, selected_squares=[target_index])
         elif self._has_selected_piece():
-            move = self._handle_move(target_index)
+            move = self._move(target_index, occupied_piece)
         return move
 
     def is_running(self) -> bool:
@@ -55,23 +58,17 @@ class BoardController(Singleton):  # TODO: Bridge pattern
     def _set_selected_piece(self, piece: Optional[Piece]):
         self._selected_piece = piece
 
+    def _set_highlight(self, indexes: List[int], highlight: bool = False):
+        self._board.set_highlight(indexes, highlight)
+
     def _is_same_alliance(self, piece: Piece) -> bool:
         return bool(piece and self._turn == piece.alliance)
 
-    def _move(self, target_index: int):
+    def _move(self, target_index: int, occupied_piece: Optional[Piece] = None) -> MoveHistory:
         selected_index = self._selected_piece.get_square_index()
         self.set_piece(None, selected_index)
         self.set_piece(self._selected_piece, target_index)
         self._set_selected_piece(None)
         self._change_turn()
-        Observer().send(msg=MessageType.BOARD_CHANGED)
-
-    def _handle_move(self, target_index: int):
-        selected_index = self._selected_piece.get_square_index()
-        self._move(target_index)
-        return MoveHistory(MoveType.NORMAL, selected_index, target_index)
-
-    def _handle_attack(self, target_index: int, attacked_piece: Piece):
-        selected_index = self._selected_piece.get_square_index()
-        self._move(target_index)
-        return MoveHistory(MoveType.ATTACK, selected_index, target_index, attacked_piece)
+        move_type = MoveType.ATTACK if occupied_piece else MoveType.NORMAL
+        return MoveHistory(move_type, selected_index, target_index, occupied_piece)

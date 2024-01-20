@@ -3,6 +3,7 @@ from typing import Tuple, Optional, TYPE_CHECKING
 import pygame
 
 from boards.constant import SQUARE_COLOR_MAP, HIGH_LIGHT_SQUARE_COLOR_MAP, Color
+from observer.constant import MessageType
 from observer.listener import Listener
 from observer.observer import Observer
 
@@ -10,14 +11,13 @@ if TYPE_CHECKING:
     from pieces.piece import Piece
 
 
-class Square(Listener):
+class Square:
     def __init__(self, index: int, width: int, height: int):
         self._index = index
         self._width = width
         self._height = height
         self._highlight = False
         self._occupying_piece = None
-        Observer().listen_to(self)
 
     def set_highlight(self, highlight: bool):
         self._highlight = highlight
@@ -32,6 +32,7 @@ class Square(Listener):
     def color(self) -> int:
         return Color.BLACK if self._is_dark() else Color.WHITE
 
+    @property
     def _rendered_color(self) -> Tuple[int, int, int]:
         return self._highlight_color() if self._highlight else self._draw_color()
 
@@ -53,9 +54,8 @@ class Square(Listener):
         row, col = self.to_coordinate()
         abs_x = col * self._width
         abs_y = row * self._height
-        rect = pygame.Rect(abs_x, abs_y, self._width, self._height)
-        pygame.draw.rect(display, self._rendered_color(), rect)
+        rect = pygame.Rect(abs_x, abs_y, self._width,
+                           self._height)
+        pygame.draw.rect(display, self._rendered_color, rect)
         self._occupying_piece and self._occupying_piece.draw(display, rect)
 
-    def on_message_received(self, msg: int):
-        pass

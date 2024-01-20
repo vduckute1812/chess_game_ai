@@ -17,13 +17,13 @@ class MoveManager(Singleton):  # TODO: Command pattern
 
     def undo(self):
         if self.has_undo():
-            move = self.__moves[self.__m_index - 1]
-            MoveHandler.undo(move)
             self.__m_index -= 1
+            move = self.__moves[self.__m_index]
+            MoveHandler.undo(move)
 
     def redo(self):
         if self.has_redo():
-            move = self.__moves[self.__m_index - 1]
+            move = self.__moves[self.__m_index]
             MoveHandler.redo(move)
             self.__m_index += 1
 

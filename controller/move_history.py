@@ -9,3 +9,4 @@ class MoveHistory:
     moved_index: int
     target_index: int
     target_piece: Optional[Piece] = None
+    first_move: bool = False

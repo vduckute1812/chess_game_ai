@@ -1,5 +1,6 @@
-from abc import abstractmethod
-from typing import List, Type
+from typing import List, Type, Optional
+
+import pygame
 
 from observer.constant import MessageType
 from observer.listener import Listener
@@ -15,6 +16,6 @@ class Observer(Singleton):  # TODO: Observer pattern
     def disconnect_from(self, listener: Listener):
         self._observers.remove(listener)
 
-    def send(self, msg: Type[MessageType]):
+    def send(self, msg: Type[MessageType], selected_squares: Optional[List[int]] = None, **kwargs):
         for observer in self._observers:
-            observer.on_message_received(msg)
+            observer.on_message_received(msg, selected_squares=selected_squares, **kwargs)
