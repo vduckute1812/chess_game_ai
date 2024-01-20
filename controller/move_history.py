@@ -4,9 +4,8 @@ from pieces.piece import Piece
 
 
 @dataclass
-class Move:
+class MoveHistory:
     move_type: int
     moved_index: int
     target_index: int
     target_piece: Optional[Piece] = None
-

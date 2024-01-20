@@ -9,8 +9,7 @@ if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_SIZE)
     controller = BoardController()
-    board = controller.get_board()
+    controller.set_board(board=Board())
     event_processor = EventProcessor()
     while controller.is_running():
         event_processor.process()
-        board.draw(screen)

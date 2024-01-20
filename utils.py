@@ -58,10 +58,6 @@ class Utils:
         return tiles
 
     @classmethod
-    def coordinate_to_index(cls, row: int, col: int) -> int:
-        return row * 8 + col
-
-    @classmethod
     def set_init_board(cls) -> List[Square]:  # Factory method
         squares = cls.generate_squares()
         piece_img_map = cls.generate_piece_img_map()

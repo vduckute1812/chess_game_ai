@@ -10,6 +10,7 @@ class Piece:
         self._piece_type = piece_type
         self._square_index = square_index
         self._img = img
+        self._first_move = False
 
     def set_square_index(self, index: int):
         self._square_index = index

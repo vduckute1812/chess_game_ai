@@ -1,23 +1,20 @@
 from abc import abstractmethod
-from typing import List
+from typing import List, Type
 
 from observer.constant import MessageType
+from observer.listener import Listener
+from singleton import Singleton
 
 
-class Observer: # TODO: Observer pattern
-    def __init__(self):
-        self._observers = []
+class Observer(Singleton):  # TODO: Observer pattern
+    _observers: List[Listener] = []
 
-    def listen_to(self, observer: type['Observer']):
-        self._observers.append(observer)
+    def listen_to(self, listener: Listener):
+        self._observers.append(listener)
 
-    def disconnect_from(self, observer: type['Observer']):
-        self._observers.remove(observer)
+    def disconnect_from(self, listener: Listener):
+        self._observers.remove(listener)
 
-    def send(self, msg: type[MessageType]):
+    def send(self, msg: Type[MessageType]):
         for observer in self._observers:
             observer.on_message_received(msg)
-
-    @abstractmethod
-    def on_message_received(self, msg: type[MessageType]):
-        pass

@@ -3,17 +3,21 @@ from typing import Tuple, Optional, TYPE_CHECKING
 import pygame
 
 from boards.constant import SQUARE_COLOR_MAP, HIGH_LIGHT_SQUARE_COLOR_MAP, Color
+from observer.listener import Listener
+from observer.observer import Observer
+
 if TYPE_CHECKING:
     from pieces.piece import Piece
 
 
-class Square:
+class Square(Listener):
     def __init__(self, index: int, width: int, height: int):
         self._index = index
         self._width = width
         self._height = height
         self._highlight = False
         self._occupying_piece = None
+        Observer().listen_to(self)
 
     def set_highlight(self, highlight: bool):
         self._highlight = highlight
@@ -52,3 +56,6 @@ class Square:
         rect = pygame.Rect(abs_x, abs_y, self._width, self._height)
         pygame.draw.rect(display, self._rendered_color(), rect)
         self._occupying_piece and self._occupying_piece.draw(display, rect)
+
+    def on_message_received(self, msg: int):
+        pass
