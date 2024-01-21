@@ -35,6 +35,10 @@ class Piece:
     def piece_type(self) -> int:
         return self._piece_type
 
+    @property
+    def first_move(self) -> bool:
+        return self._first_move
+
     def _get_piece_indexes(self) -> Tuple[List[int], List[int]]:
         return BoardController().get_piece_indexes(self._piece_type)
 

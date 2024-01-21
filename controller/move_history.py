@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional, TYPE_CHECKING
 
+from controller.constant import MoveType
+
 if TYPE_CHECKING:
     from pieces.piece import Piece
 
