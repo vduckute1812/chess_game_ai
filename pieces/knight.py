@@ -8,3 +8,4 @@ class Knight(Piece):
     def __init__(self, square_index: int, piece_type: int, img: pygame.Surface):
         super().__init__(square_index, piece_type, img)
         self._directions = [17, 15, 10, 6, -17, -15, -10, -6]
+        self._one_step = True

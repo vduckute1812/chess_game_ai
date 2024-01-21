@@ -72,29 +72,42 @@ class BoardController(Singleton):  # TODO: Bridge pattern
     def _is_same_alliance(self, piece: "Piece") -> bool:
         return bool(piece and self._turn == piece.alliance)
 
-    def _move(self, target_index: int):
+    def _move(self, target_index: int, move_type: int):
         selected_index = self._selected_piece.get_square_index()
         self.set_piece(None, selected_index)
         self.set_piece(self._selected_piece, target_index)
+        self._update_indexes(selected_index, target_index, move_type)
         self._set_selected_piece(None)
         self._change_turn()
 
     def _handle_select_piece(self, piece: "Piece"):
-        valid_moves, attack_moves = piece.get_valid_moves()
+        self._reset_selected_highlight()
         self._set_selected_piece(piece)
+        valid_moves, attack_moves = piece.get_valid_moves()
         square_index = piece.get_square_index()
         self._set_highlight([square_index] + valid_moves, highlight=True)
         Observer().send(msg=MessageType.SQUARE_HIGHLIGHT, selected_indexes=[square_index] + valid_moves)
 
-    def _handle_move_piece(self, target_index: int, occupied_piece: Optional["Piece"]) -> MoveHistory:
+    def _reset_selected_highlight(self):
+        if self._selected_piece:
+            square_index = self._selected_piece.get_square_index()
+            valid_moves, attack_moves = self._selected_piece.get_valid_moves()
+            valid_moves.append(square_index)
+            self._set_highlight(valid_moves, highlight=False)
+            Observer().send(msg=MessageType.SQUARE_HIGHLIGHT, selected_indexes=[square_index] + valid_moves)
+
+    def _handle_move_piece(self, target_index: int, occupied_piece: Optional["Piece"]) -> Optional[MoveHistory]:
+        move = None
         valid_moves, attack_moves = self._selected_piece.get_valid_moves()
         selected_index = self._selected_piece.get_square_index()
+        self._set_highlight(valid_moves + [selected_index], highlight=False)
         move_type = MoveType.ATTACK if occupied_piece else MoveType.NORMAL
-        self._update_indexes(selected_index, target_index, move_type)
-        self._move(target_index)
-        self._set_highlight([selected_index] + valid_moves, highlight=False)
-        Observer().send(msg=MessageType.MOVE_MADE, selected_indexes=[selected_index, target_index] + valid_moves)
-        return MoveHistory(move_type, selected_index, target_index, occupied_piece)
+        if target_index in valid_moves:
+            self._selected_piece.set_first_move(first_move=False)
+            self._move(target_index, move_type)
+            move = MoveHistory(move_type, selected_index, target_index, occupied_piece)
+        Observer().send(msg=MessageType.MOVE_MADE, selected_indexes=[selected_index] + valid_moves)
+        return move
 
     def _set_init_board_indexes(self) -> Tuple[List[int], List[int]]:
         w_piece_indexes, b_piece_indexes = [], []

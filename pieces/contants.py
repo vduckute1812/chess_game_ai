@@ -57,11 +57,11 @@ class PieceType:
         """
         allience = "w" if cls.is_white(piece_type) else "b"
         piece_key = 'king' if cls.is_king(piece_type) else \
-                    'queen' if cls.is_queen(piece_type) else \
-                    'bishop' if cls.is_bishop(piece_type) else \
+            'queen' if cls.is_queen(piece_type) else \
+                'bishop' if cls.is_bishop(piece_type) else \
                     'rook' if cls.is_rook(piece_type) else \
-                    'knight' if cls.is_knight(piece_type) else \
-                    'pawn'
+                        'knight' if cls.is_knight(piece_type) else \
+                            'pawn'
         return allience + "_" + piece_key
 
     @classmethod
