@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class MoveHistory:
+class Move:
     move_type: int
     moved_index: int
     target_index: int

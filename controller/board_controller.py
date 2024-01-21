@@ -1,7 +1,7 @@
 from typing import Optional, List, Dict, TYPE_CHECKING, Tuple
 from boards.constant import Alliance
 from controller.constant import MoveType
-from controller.move_history import MoveHistory
+from controller.move_history import Move
 from observer.constant import MessageType
 from observer.observer import Observer
 from pieces.contants import PieceType
@@ -25,7 +25,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
         self._w_piece_indexes, self._b_piece_indexes = self._set_init_board_indexes()
         Observer().send(msg=MessageType.INIT_BOARD)
 
-    def handle_move_event(self, mx: int, my: int) -> Optional[MoveHistory]:
+    def handle_move_event(self, mx: int, my: int) -> Optional[Move]:
         from utils import Utils
         row, col = Utils.coord_to_position(mx, my)
         target_index = row * 8 + col
@@ -34,12 +34,6 @@ class BoardController(Singleton):  # TODO: Bridge pattern
             self._handle_select_piece(occupied_piece)
         elif self._has_selected_piece():
             return self._handle_move_piece(target_index, occupied_piece)
-
-    def get_piece_indexes(self, piece_type: int) -> Tuple[List[int], List[int]]:
-        if PieceType.is_white(piece_type):
-            return self._w_piece_indexes, self._b_piece_indexes
-        else:
-            return self._b_piece_indexes, self._w_piece_indexes
 
     def is_running(self) -> bool:
         return self._running
@@ -97,7 +91,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
             self._set_highlight(valid_moves, highlight=False)
             Observer().send(msg=MessageType.SQUARE_HIGHLIGHT, selected_indexes=[square_index] + valid_moves)
 
-    def _handle_move_piece(self, target_index: int, occupied_piece: Optional["Piece"]) -> Optional[MoveHistory]:
+    def _handle_move_piece(self, target_index: int, occupied_piece: Optional["Piece"]) -> Optional[Move]:
         move = None
         valid_moves, attack_moves = self._selected_piece.get_valid_moves()
         selected_index = self._selected_piece.get_square_index()
@@ -107,7 +101,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
             first_move = self._selected_piece.first_move
             self._selected_piece.set_first_move(first_move=False)
             self._move(target_index, move_type)
-            move = MoveHistory(move_type, selected_index, target_index, occupied_piece, first_move)
+            move = Move(move_type, selected_index, target_index, occupied_piece, first_move)
         Observer().send(msg=MessageType.MOVE_MADE, selected_indexes=[selected_index] + valid_moves)
         return move
 
@@ -119,9 +113,25 @@ class BoardController(Singleton):  # TODO: Bridge pattern
             lts.extend(indexes)
         return w_piece_indexes, b_piece_indexes
 
+    def get_piece_indexes(self, piece_type: int) -> Tuple[List[int], List[int]]:
+        if PieceType.is_white(piece_type):
+            return self._w_piece_indexes, self._b_piece_indexes
+        else:
+            return self._b_piece_indexes, self._w_piece_indexes
+
     def _update_indexes(self, selected_index: int, target_index: int, move_type: int, is_undo: bool = False):
-        alliance, opponent_indexes = self.get_piece_indexes(self._selected_piece.piece_type)
-        alliance.remove(selected_index)
-        alliance.append(target_index)
+        alliance_indexes, opponent_indexes = self.get_piece_indexes(self._selected_piece.piece_type)
+        alliance_indexes.remove(selected_index)
+        alliance_indexes.append(target_index)
         if MoveType.is_attack(move_type):
             opponent_indexes.append(selected_index) if is_undo else opponent_indexes.remove(target_index)
+
+    def collect_all_valid_moves(self) -> Tuple[List[int], List[int]]:
+        valid_moves, attack_moves = [], []
+        alliance_indexes, opponent_indexes = self.get_piece_indexes(self._selected_piece.piece_type)
+        for index in alliance_indexes:
+            piece = self._board.get_piece(index)
+            _valid_moves, _attack_moves = piece.get_valid_moves()
+            valid_moves += _valid_moves
+            attack_moves += _attack_moves
+        return alliance_indexes, opponent_indexes

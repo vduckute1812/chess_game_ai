@@ -51,7 +51,6 @@ class Piece:
     def get_valid_moves(self) -> Tuple[List[int], List[int]]:
         normal_moves, attack_moves = [], []
         alliance_indexes, opponent_indexes = self._get_piece_indexes()
-
         all_indexes = alliance_indexes + opponent_indexes
         for direction in self._directions:
             cur_pos = self._square_index
