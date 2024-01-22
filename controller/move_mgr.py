@@ -1,7 +1,7 @@
 from typing import List
 
 from controller.board_controller import BoardController
-from controller.move_history import Move
+from controller.move import Move
 from observer.constant import MessageType
 from observer.observer import Observer
 from singleton import Singleton
@@ -22,16 +22,13 @@ class MoveManager(Singleton):  # TODO: Command pattern
         if self.has_undo():
             self.__m_index -= 1
             move = self.__moves[self.__m_index]
-            BoardController().reset_selected_highlight()
             MoveHandler.undo(move)
-            Observer().send(msg=MessageType.MOVE_MADE, selected_indexes=[move.moved_index, move.target_index])
 
     def redo(self):
         if self.has_redo():
             move = self.__moves[self.__m_index]
             MoveHandler.redo(move)
             self.__m_index += 1
-            Observer().send(msg=MessageType.MOVE_MADE, selected_indexes=[move.moved_index, move.target_index])
 
     def has_undo(self) -> bool:
         return self.__m_index > 0

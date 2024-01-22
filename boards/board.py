@@ -5,7 +5,7 @@ import pygame
 from boards.constant import WINDOW_SIZE
 from boards.square import Square
 from observer.constant import MessageType
-from observer.listener import Listener
+from observer.observer import Listener
 from observer.observer import Observer
 from pieces.piece import Piece
 from utils import Utils
@@ -24,9 +24,6 @@ class Board(Listener):
     def get_piece(self, index: int) -> Optional[Piece]:
         square = self._get_square(index)
         return square.get_piece() if square else None
-
-    def get_screen(self) -> pygame.Surface:
-        return self._screen
 
     def set_piece(self, piece: Piece, index: int):
         piece and piece.set_square_index(index)
@@ -63,3 +60,11 @@ class Board(Listener):
         for index in square_indexes:
             self._get_square(index).draw(self._screen)
         pygame.display.update()
+
+    def to_square_piece_index_map(self) -> Dict[int, int]:
+        config = {}
+        for square in self._squares:
+            piece = square.get_piece()
+            if piece:
+                config[square.index] = piece.piece_type
+        return config

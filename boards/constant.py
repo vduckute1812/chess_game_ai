@@ -22,9 +22,10 @@ WINDOW_SIZE = (600, 600)
 
 
 class Alliance:
-    WHITE = 0
-    BLACK = 1
-    BOTH = 2
+    UNKNOWN = 0
+    WHITE = 1
+    BLACK = 2
+    BOTH = 3
 
     @classmethod
     def is_black(cls, alliance: int) -> bool:

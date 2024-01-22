@@ -1,10 +1,18 @@
+from abc import ABC, abstractmethod
 from typing import List, Type, Optional
 
 import pygame
 
 from observer.constant import MessageType
-from observer.listener import Listener
 from singleton import Singleton
+
+
+class Listener(ABC):
+
+    @classmethod
+    @abstractmethod
+    def on_message_received(cls, msg: Type[MessageType], **kwargs):
+        pass
 
 
 class Observer(Singleton):  # TODO: Observer pattern

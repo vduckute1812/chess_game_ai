@@ -40,7 +40,7 @@ class Piece:
         return self._first_move
 
     def _get_piece_indexes(self) -> Tuple[List[int], List[int]]:
-        return BoardController().get_piece_indexes(self._piece_type)
+        return BoardController().get_piece_indexes(self.alliance)
 
     @staticmethod
     def _is_valid_index(current_index, target_index) -> bool:

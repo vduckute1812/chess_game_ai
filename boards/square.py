@@ -3,9 +3,6 @@ from typing import Tuple, Optional, TYPE_CHECKING
 import pygame
 
 from boards.constant import SQUARE_COLOR_MAP, HIGH_LIGHT_SQUARE_COLOR_MAP, Color, ATTACK_SQUARE_COLOR_MAP
-from observer.constant import MessageType
-from observer.listener import Listener
-from observer.observer import Observer
 
 if TYPE_CHECKING:
     from pieces.piece import Piece
@@ -56,17 +53,10 @@ class Square:
     def _attack_color(self) -> Tuple[int, int, int]:
         return ATTACK_SQUARE_COLOR_MAP[self.color]
 
-    def to_coordinate(self) -> Tuple[int, int]:
-        row = self._index // 8
-        col = self._index % 8
-        return row, col
-
     def draw(self, display):
-        row, col = self.to_coordinate()
+        row, col = self._index // 8, self._index % 8
         abs_x = col * self._width
         abs_y = row * self._height
-        rect = pygame.Rect(abs_x, abs_y, self._width,
-                           self._height)
+        rect = pygame.Rect(abs_x, abs_y, self._width, self._height)
         pygame.draw.rect(display, self._rendered_color(), rect)
         self._occupying_piece and self._occupying_piece.draw(display, rect)
-

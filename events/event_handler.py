@@ -14,8 +14,7 @@ class EventHandler(BaseEvent):
     def process(self):
         match self._type:
             case EventHandlerType.MOUSE_CLICK:
-                move = BoardController().handle_move_event(self._pos[0], self._pos[1])
-                move and MoveManager().add_move(move)
+                BoardController().handle_move_event(self._pos[0], self._pos[1])
             case EventHandlerType.QUIT:
                 BoardController().force_quit()
             case EventHandlerType.UNDO:

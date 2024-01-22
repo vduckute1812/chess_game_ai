@@ -18,7 +18,7 @@ from pieces.rook import Rook
 class Utils:
 
     @classmethod
-    def generate_piece_cls(cls, piece_type: str) -> Type[Piece]:
+    def generate_piece_cls(cls, piece_type: int) -> Type[Piece]:
         match piece_type:
             case PieceType.W_PAWN | PieceType.B_PAWN:
                 return Pawn
