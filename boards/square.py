@@ -5,7 +5,7 @@ import pygame
 from boards.constant import SQUARE_COLOR_MAP, HIGH_LIGHT_SQUARE_COLOR_MAP, Color, ATTACK_SQUARE_COLOR_MAP
 
 if TYPE_CHECKING:
-    from pieces.piece import Piece
+    from boards.pieces.piece import Piece
 
 
 class Square:

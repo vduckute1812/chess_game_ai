@@ -1,4 +1,4 @@
-from pieces.contants import PieceType
+from boards.pieces.contants import PieceType
 
 
 PIECE_VALUE_MAP = {

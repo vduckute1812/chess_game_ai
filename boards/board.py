@@ -1,4 +1,4 @@
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Tuple
 
 import pygame
 
@@ -6,8 +6,8 @@ from boards.constant import WINDOW_SIZE
 from boards.square import Square
 from observer.constant import MessageType
 from observer.observer import Listener
-from observer.observer import Observer
-from pieces.piece import Piece
+from boards.pieces.contants import PieceType
+from boards.pieces.piece import Piece
 from utils import Utils
 
 
@@ -16,7 +16,6 @@ class Board(Listener):
         super().__init__()
         self._squares = Utils.set_init_board()
         self._screen = pygame.display.set_mode(WINDOW_SIZE)
-        Observer().listen_to(self)
 
     def _get_square(self, index: int) -> Square:
         return self._squares[index]
@@ -35,6 +34,13 @@ class Board(Listener):
             piece = square.get_piece()
             piece and config.setdefault(piece.piece_type, []).append(square.index)
         return config
+
+    def get_piece_indexes(self) -> Tuple[List[int], List[int]]:
+        w_piece_indexes, b_piece_indexes = [], []
+        for piece_type, indexes in self.to_board_config().items():
+            lts = b_piece_indexes if PieceType.is_black(piece_type) else w_piece_indexes
+            lts.extend(indexes)
+        return w_piece_indexes, b_piece_indexes
 
     def set_highlight(self, selected_indexes: List[int], highlight: bool = True):
         for index in selected_indexes:

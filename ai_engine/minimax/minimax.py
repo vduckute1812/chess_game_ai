@@ -1,11 +1,6 @@
-from typing import Dict, List
-
-from ai_engine.constant import CHECKMATE, STALEMATE, DEPTH, PIECE_POSITION_SCORES, PIECE_VALUE_MAP
-from ai_engine.minimax.evaluator import StandardBoardEvaluator
-from boards.constant import Alliance
-from controller.board_controller import BoardController
-from game_state import GameState
-from pieces.contants import PieceType
+from ai_engine.constant import CHECKMATE, DEPTH, PIECE_POSITION_SCORES, PIECE_VALUE_MAP
+from game.game_state import GameState
+from boards.pieces.contants import PieceType
 from singleton import Singleton
 
 

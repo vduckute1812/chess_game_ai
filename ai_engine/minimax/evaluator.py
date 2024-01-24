@@ -1,7 +1,6 @@
 from typing import Dict, List
 
-from game_state import GameState
-from singleton import Singleton
+from game.game_state import GameState
 
 
 class StandardBoardEvaluator:

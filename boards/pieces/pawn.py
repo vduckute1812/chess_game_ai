@@ -2,8 +2,8 @@ from typing import Tuple, List
 
 import pygame
 
-from pieces.contants import PieceType
-from pieces.piece import Piece
+from boards.pieces.contants import PieceType
+from boards.pieces.piece import Piece
 
 
 class Pawn(Piece):

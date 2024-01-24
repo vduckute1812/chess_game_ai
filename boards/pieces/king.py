@@ -1,11 +1,10 @@
 import pygame
 
-from pieces.piece import Piece
+from boards.pieces.piece import Piece
 
 
-class Knight(Piece):
-    # Handle valid moves
+class King(Piece):
     def __init__(self, square_index: int, piece_type: int, img: pygame.Surface):
         super().__init__(square_index, piece_type, img)
-        self._directions = [17, 15, 10, 6, -17, -15, -10, -6]
+        self._directions = [8, 1, -8, -1, 7, 9, -7, -9]
         self._one_step = True

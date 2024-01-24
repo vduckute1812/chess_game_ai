@@ -1,7 +1,7 @@
 from typing import Tuple, List
 import pygame
 from controller.board_controller import BoardController
-from pieces.contants import PieceType
+from boards.pieces.contants import PieceType
 
 
 class Piece:

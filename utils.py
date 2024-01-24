@@ -4,14 +4,14 @@ import pygame
 from boards.constant import WINDOW_SIZE
 from boards.square import Square
 from constant import ASSETS_DIR, BOARD_CONFIG
-from pieces.contants import PieceType
-from pieces.bishop import Bishop
-from pieces.king import King
-from pieces.knight import Knight
-from pieces.pawn import Pawn
-from pieces.piece import Piece
-from pieces.queen import Queen
-from pieces.rook import Rook
+from boards.pieces.contants import PieceType
+from boards.pieces.bishop import Bishop
+from boards.pieces.king import King
+from boards.pieces.knight import Knight
+from boards.pieces.pawn import Pawn
+from boards.pieces.piece import Piece
+from boards.pieces.queen import Queen
+from boards.pieces.rook import Rook
 
 
 

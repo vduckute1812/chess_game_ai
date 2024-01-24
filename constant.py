@@ -1,4 +1,4 @@
-from pieces.contants import PieceType
+from boards.pieces.contants import PieceType
 
 ASSETS_DIR = 'assets/pieces/'
 
