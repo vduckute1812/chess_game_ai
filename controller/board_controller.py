@@ -1,4 +1,7 @@
-from typing import Optional, Tuple
+from multiprocessing import Queue, Process
+from typing import Optional, Tuple, List
+
+from ai_engine.minimax.minimax import Minimax
 from boards.constant import Alliance
 from controller.constant import MoveType
 from history.move import Move
@@ -22,7 +25,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
         Observer().send(msg=MessageType.INIT_BOARD)
 
     def handle_board_event(self, mx: int, my: int) -> Optional[Move]:
-        if self._is_ai_turn():  # Block board event when play with AI
+        if self._is_ai_turn():  # Block board event when AI is thinking
             return
         from utils import Utils
         row, col = Utils.coord_to_position(mx, my)
@@ -39,13 +42,13 @@ class BoardController(Singleton):  # TODO: Bridge pattern
     def force_quit(self):
         self._game_state.running = False
 
-    def move_piece(self, moved_coord: int, target_coord: int, first_move=False, undo_piece: Optional["Piece"] = None):
+    def move_piece(self, moved_coord: int, target_coord: int, first_move=False, undo_piece: Optional[Piece] = None):
         self._selected_piece = self._board.get_piece(moved_coord)
         self._selected_piece and self._move(target_coord, first_move=first_move)
         if undo_piece:
             self._set_piece(undo_piece, moved_coord)
 
-    def _set_piece(self, piece: Optional["Piece"], index: int):
+    def _set_piece(self, piece: Optional[Piece], index: int):
         self._board.set_piece(piece, index)
 
     def _change_turn(self):
@@ -80,10 +83,10 @@ class BoardController(Singleton):  # TODO: Bridge pattern
 
     def _handle_move_selected_piece(self, target_index: int, attacked_piece: Optional[Piece]) -> Optional[Move]:
         self.update_highlight_tiles()
-        w_ids, b_ids = self._board.get_piece_indexes()
-        valid_moves, _ = self._selected_piece.get_valid_moves(w_ids, b_ids)
+        valid_moves, _ = self.get_valid_moves(self._selected_piece)
         if target_index in valid_moves:
             moved_index, first_move = self._move(target_index=target_index)
+            self._handle_ai_turn()
             Observer().send(msg=MessageType.MOVE_MADE, moved_index=moved_index, target_index=target_index)
             return Move(
                 moved_index=moved_index,
@@ -93,5 +96,15 @@ class BoardController(Singleton):  # TODO: Bridge pattern
                 first_move=first_move
             )
 
+    def _handle_ai_turn(self):
+        if self._is_ai_turn():
+            return_queue = Queue()  # used to pass data between threads
+            move_finder_process = Process(target=Minimax.negamax_alpha_beta())
+            move_finder_process.start()
+
     def update_highlight_tiles(self, highlight: bool = False):
         Observer().send(msg=MessageType.SQUARE_HIGHLIGHT, piece=self._selected_piece, highlight=highlight)
+
+    def get_valid_moves(self, piece: Piece) -> Tuple[List[int], List[int]]:
+        w_ids, b_ids = self._board.get_piece_indexes()
+        return piece.get_valid_moves(w_ids, b_ids)

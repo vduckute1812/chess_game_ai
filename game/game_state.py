@@ -9,6 +9,7 @@ class GameState:
     running: bool = False
     ai_player: Dict = None
 
+
     def set_player_config(self):
         self.ai_player = {
             Alliance.WHITE: False,
