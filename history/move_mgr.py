@@ -1,11 +1,8 @@
 from typing import List
 
-from controller.board_controller import BoardController
-from controller.move import Move
-from observer.constant import MessageType
-from observer.observer import Observer
+from history.move import Move
 from singleton import Singleton
-from controller.move_handler import MoveHandler
+from history.move_handler import MoveHandler
 
 
 class MoveManager(Singleton):  # TODO: Command pattern

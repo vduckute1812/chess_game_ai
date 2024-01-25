@@ -17,9 +17,8 @@ class Pawn(Piece):
         self._legal_directions = [8]
         self._one_step = True
 
-    def get_valid_moves(self) -> Tuple[List[int], List[int]]:
+    def get_valid_moves(self, alliance_indexes: List[int], opponent_indexes: List[int]) -> Tuple[List[int], List[int]]:
         pawn_direction = 1 if PieceType.is_black(self._piece_type) else -1
-        alliance_indexes, opponent_indexes = self._get_piece_indexes()
         all_indexes = alliance_indexes + opponent_indexes
         self.update_legal_directions()
         normal_moves = self.get_legal_moves(pawn_direction, all_indexes)

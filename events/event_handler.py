@@ -1,7 +1,7 @@
 from typing import Optional
 
 from controller.board_controller import BoardController
-from controller.move_mgr import MoveManager
+from history.move_mgr import MoveManager
 from events.base import BaseEvent
 from events.constant import EventHandlerType
 
@@ -14,7 +14,8 @@ class EventHandler(BaseEvent):
     def process(self):
         match self._type:
             case EventHandlerType.MOUSE_CLICK:
-                BoardController().handle_board_event(self._pos[0], self._pos[1])
+                move = BoardController().handle_board_event(self._pos[0], self._pos[1])
+                move and MoveManager().add_move(move=move)
             case EventHandlerType.QUIT:
                 BoardController().force_quit()
             case EventHandlerType.UNDO:

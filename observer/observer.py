@@ -24,6 +24,6 @@ class Observer(Singleton):  # TODO: Observer pattern
     def disconnect_from(self, listener: Listener):
         self._observers.remove(listener)
 
-    def send(self, msg: Type[MessageType], selected_indexes: Optional[List[int]] = None, **kwargs):
+    def send(self, msg: Type[MessageType], **kwargs):
         for observer in self._observers:
-            observer.on_message_received(msg, selected_squares=selected_indexes, **kwargs)
+            observer.on_message_received(msg, **kwargs)

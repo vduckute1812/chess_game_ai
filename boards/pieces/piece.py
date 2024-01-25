@@ -1,6 +1,5 @@
 from typing import Tuple, List
 import pygame
-from controller.board_controller import BoardController
 from boards.pieces.contants import PieceType
 
 
@@ -19,7 +18,8 @@ class Piece:
     def set_first_move(self, first_move: bool):
         self._first_move = first_move
 
-    def get_square_index(self) -> int:
+    @property
+    def square_index(self) -> int:
         return self._square_index
 
     def draw(self, display, rect):
@@ -39,18 +39,14 @@ class Piece:
     def first_move(self) -> bool:
         return self._first_move
 
-    def _get_piece_indexes(self) -> Tuple[List[int], List[int]]:
-        return BoardController().get_piece_indexes(self.alliance)
-
     @staticmethod
     def _is_valid_index(current_index, target_index) -> bool:
         step_row = abs(target_index // 8 - current_index // 8)
         step_col = abs(target_index % 8 - current_index % 8)
         return 0 < target_index < 64 and step_row <= 2 and step_col <= 2
 
-    def get_valid_moves(self) -> Tuple[List[int], List[int]]:
+    def get_valid_moves(self, alliance_indexes: List[int], opponent_indexes: List[int]) -> Tuple[List[int], List[int]]:
         normal_moves, attack_moves = [], []
-        alliance_indexes, opponent_indexes = self._get_piece_indexes()
         all_indexes = alliance_indexes + opponent_indexes
         for direction in self._directions:
             cur_pos = self._square_index
