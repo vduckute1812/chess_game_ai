@@ -3,10 +3,7 @@ from typing import Tuple, Optional, TYPE_CHECKING
 import pygame
 
 from boards.constant import SQUARE_COLOR_MAP, HIGH_LIGHT_SQUARE_COLOR_MAP, Color, ATTACK_SQUARE_COLOR_MAP
-
-if TYPE_CHECKING:
-    from boards.pieces.piece import Piece
-
+from boards.pieces.piece import Piece
 
 class Square:
     def __init__(self, index: int, width: int, height: int):
@@ -19,10 +16,10 @@ class Square:
     def set_highlight(self, highlight: bool):
         self._highlight = highlight
 
-    def set_piece(self, piece: Optional["Piece"]):
+    def set_piece(self, piece: Optional[Piece]):
         self._occupying_piece = piece
 
-    def get_piece(self) -> Optional["Piece"]:
+    def get_piece(self) -> Optional[Piece]:
         return self._occupying_piece
 
     @property

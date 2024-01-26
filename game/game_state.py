@@ -13,5 +13,5 @@ class GameState:
     def set_player_config(self):
         self.ai_player = {
             Alliance.WHITE: False,
-            Alliance.BLACK: False
+            Alliance.BLACK: True
         }

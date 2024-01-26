@@ -47,7 +47,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
     def _set_piece(self, piece: Optional[Piece], index: int):
         self._board.set_piece(piece, index)
 
-    def _change_turn(self):
+    def change_turn(self):
         self._game_state.turn = Alliance.WHITE if Alliance.is_black(self._game_state.turn) else Alliance.BLACK
 
     def _is_ai_turn(self) -> bool:
@@ -70,7 +70,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
         self._selected_piece.set_first_move(first_move=first_move)
         self._set_piece(self._selected_piece, target_index)
         self._set_selected_piece(None)
-        self._change_turn()
+        self.change_turn()
         return piece_type, square_index, _first_move
 
     def _handle_select_piece(self, piece: Piece):
@@ -92,16 +92,18 @@ class BoardController(Singleton):  # TODO: Bridge pattern
                 attacked_piece=attacked_piece,
             )
             Observer().send(msg=MessageType.MOVE_MADE, **move_data)
+            Observer().send(msg=MessageType.AI_MOVE)
             return Move(**move_data)
 
-    def _handle_ai_turn(self):
+    def handle_ai_turn(self):
         from history.move_handler import MoveHandler
         from history.move_mgr import MoveManager
-
-        # return_queue = Queue()  # used to pass data between threads
-        # move_finder_process = Process(target=Minimax.negamax_alpha_beta())
-        # move_finder_process.start()
-        moves = self.generate_valid_moves(self._game_state.turn)
+        return_queue = Queue()  # used to pass data between threads
+        move_finder_process = Process(target=self.generate_valid_moves, args = (self._game_state.turn, return_queue))
+        move_finder_process.start()
+        moves = return_queue.get()
+        # move_finder_process = Process(target=self.generate_valid_moves(self._game_state.turn))
+        # moves = self.generate_valid_moves(self._game_state.turn)
         move = moves[0]
         MoveHandler().redo(moves[0])
         MoveManager().add_move(move)
@@ -114,5 +116,5 @@ class BoardController(Singleton):  # TODO: Bridge pattern
         w_ids, b_ids = self._board.get_piece_indexes(piece)
         return piece.get_valid_moves(w_ids, b_ids)
 
-    def generate_valid_moves(self, alliance: int):
+    def generate_valid_moves(self, alliance: int) -> List[Move]:
         return self._board.generate_valid_moves(alliance)

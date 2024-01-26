@@ -40,8 +40,7 @@ class Pawn(Piece):
                 cur_pos += direction
                 if cur_pos in all_indexes:
                     break
-                else:
-                    normal_moves.append(cur_pos)
+                normal_moves.append(cur_pos)
         return normal_moves
 
     def get_attack_moves(self, pawn_direction: int, opponent_indexes: List[int]) -> List[int]:

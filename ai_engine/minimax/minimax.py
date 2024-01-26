@@ -1,14 +1,28 @@
-from ai_engine.constant import CHECKMATE, DEPTH, PIECE_POSITION_SCORES, PIECE_VALUE_MAP
+from ai_engine.constant import PIECE_POSITION_SCORES, PIECE_VALUE_MAP
+from controller.board_controller import BoardController
 from game.game_state import GameState
 from boards.pieces.contants import PieceType
-from history.move_handler import MoveHandler
+from observer.constant import MessageType
+from observer.observer import Listener, Observer
 from singleton import Singleton
 
 
-class Minimax(Singleton):
+class Minimax(Singleton, Listener):
+    def __init__(self):
+        super().__init__()
+        Observer().listen_to(self)
+
     @classmethod
     def find_best_move(cls, moves):
         pass
+
+    def on_message_received(
+            self, msg: int, **kwargs
+    ):
+        match msg:
+            case MessageType.AI_MOVE:
+                BoardController().handle_ai_turn()
+                BoardController().change_turn()
 
     @classmethod
     def negamax_alpha_beta(cls, valid_moves, depth, alpha, beta, turn_multiplier):
@@ -21,26 +35,27 @@ class Minimax(Singleton):
         :param turn_multiplier:
         :return:
         """
-        board_config = game_state.board.to_square_piece_index_map()
-        if depth == 0:
-            return turn_multiplier * cls.score_board(game_state)
-        # move ordering - implement later //TODO
-        max_score = -CHECKMATE
-        for move in valid_moves:
-            # game_state.make_move(move)  Handle make move // TODO
-            # next_moves = game_state.getValidMoves()  Handle get valid moves // TODO
-            next_moves = []
-            score = -cls.negamax_alpha_beta(game_state, next_moves, depth - 1, -beta, -alpha, -turn_multiplier)
-            if score > max_score:
-                max_score = score
-                if depth == DEPTH:
-                    next_move = move
-            # game_state.undoMove()  Handle undo move //TODO
-            if max_score > alpha:
-                alpha = max_score
-            if alpha >= beta:
-                break
-        return max_score
+        return 0
+        # board_config = game_state.board.to_square_piece_index_map()
+        # if depth == 0:
+        #     return turn_multiplier * cls.score_board(game_state)
+        # # move ordering - implement later //TODO
+        # max_score = -CHECKMATE
+        # for move in valid_moves:
+        #     # game_state.make_move(move)  Handle make move // TODO
+        #     # next_moves = game_state.getValidMoves()  Handle get valid moves // TODO
+        #     next_moves = []
+        #     score = -cls.negamax_alpha_beta(game_state, next_moves, depth - 1, -beta, -alpha, -turn_multiplier)
+        #     if score > max_score:
+        #         max_score = score
+        #         if depth == DEPTH:
+        #             next_move = move
+        #     # game_state.undoMove()  Handle undo move //TODO
+        #     if max_score > alpha:
+        #         alpha = max_score
+        #     if alpha >= beta:
+        #         break
+        # return max_score
 
     @classmethod
     def score_board(cls, game_state: GameState):

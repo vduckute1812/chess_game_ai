@@ -5,6 +5,7 @@ class MessageType:
     GAME_OVER = 3
     LOCK_BOARD = 4
     SQUARE_HIGHLIGHT = 5
+    AI_MOVE = 6
 
     @classmethod
     def is_move_made(cls, msg_type: int):
