@@ -1,13 +1,26 @@
 from ai_engine.constant import CHECKMATE, DEPTH, PIECE_POSITION_SCORES, PIECE_VALUE_MAP
 from game.game_state import GameState
 from boards.pieces.contants import PieceType
+from history.move_handler import MoveHandler
 from singleton import Singleton
 
 
 class Minimax(Singleton):
+    @classmethod
+    def find_best_move(cls, moves):
+        pass
 
     @classmethod
-    def negamax_alpha_beta(cls, game_state: GameState, valid_moves, depth, alpha, beta, turn_multiplier):
+    def negamax_alpha_beta(cls, valid_moves, depth, alpha, beta, turn_multiplier):
+        """
+        Negamax algorithm with alpha-beta pruning
+        :param valid_moves:
+        :param depth:
+        :param alpha:
+        :param beta:
+        :param turn_multiplier:
+        :return:
+        """
         board_config = game_state.board.to_square_piece_index_map()
         if depth == 0:
             return turn_multiplier * cls.score_board(game_state)
@@ -48,5 +61,4 @@ class Minimax(Singleton):
                 score += PIECE_POSITION_SCORES[piece_type][square_index]
             if PieceType.is_white(piece_type):
                 score += PIECE_VALUE_MAP[piece_type]
-
         return score

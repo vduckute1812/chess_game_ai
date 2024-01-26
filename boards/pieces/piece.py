@@ -58,4 +58,5 @@ class Piece:
                 normal_moves.append(cur_pos)
                 if self._one_step:
                     break
-        return normal_moves + attack_moves, attack_moves
+        return normal_moves, attack_moves
+

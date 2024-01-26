@@ -3,7 +3,6 @@ from typing import Type, Tuple, List, Dict
 import pygame
 from boards.constant import WINDOW_SIZE
 from boards.square import Square
-from constant import ASSETS_DIR, BOARD_CONFIG
 from boards.pieces.contants import PieceType
 from boards.pieces.bishop import Bishop
 from boards.pieces.king import King
@@ -14,6 +13,7 @@ from boards.pieces.queen import Queen
 from boards.pieces.rook import Rook
 
 
+ASSETS_DIR = 'assets/pieces/'
 
 class Utils:
 
@@ -36,17 +36,19 @@ class Utils:
                 return Piece
 
     @classmethod
-    def generate_piece_img_map(cls) -> Dict[Enum, pygame.Surface]:
+    def generate_new_piece(cls, piece_type: int, square_index: int) -> Piece:
+        img = cls.generate_piece_img(piece_type=piece_type)
+        piece_cls = cls.generate_piece_cls(piece_type)
+        return piece_cls(piece_type=piece_type, img=img, square_index=square_index)
+
+    @classmethod
+    def generate_piece_img(cls, piece_type: int) -> pygame.Surface:
+        piece_str = PieceType.to_str(piece_type)
+        img_path = ASSETS_DIR + piece_str + '.png'
+        img = pygame.image.load(img_path)
         tile_width, tile_height = WINDOW_SIZE[0] // 8, WINDOW_SIZE[1] // 8
-        piece_img_map = {}
-        for piece_type in PieceType.list_all():
-            piece_str = PieceType.to_str(piece_type)
-            if piece_type and piece_type not in piece_img_map:
-                img_path = ASSETS_DIR + piece_str + '.png'
-                img = pygame.image.load(img_path)
-                img = pygame.transform.scale(img, (tile_width - 35, tile_height - 35))
-                piece_img_map[piece_type] = img
-        return piece_img_map
+        img = pygame.transform.scale(img, (tile_width - 35, tile_height - 35))
+        return img
 
     @classmethod
     def generate_squares(cls) -> List[Square]:
@@ -58,15 +60,12 @@ class Utils:
         return tiles
 
     @classmethod
-    def set_init_board(cls) -> List[Square]:  # Factory method
+    def set_init_board(cls, board_config: Dict) -> List[Square]:  # Factory method
         squares = cls.generate_squares()
-        piece_img_map = cls.generate_piece_img_map()
-        for piece_type, positions in BOARD_CONFIG.items():
-            img = piece_img_map.get(piece_type)
-            piece_cls = cls.generate_piece_cls(piece_type)
-            for index in positions:
-                piece_obj = piece_cls(square_index=index, piece_type=piece_type, img=img)
-                squares[index].set_piece(piece_obj)
+        for piece_type, positions in board_config.items():
+            for square_index in positions:
+                piece_obj = cls.generate_new_piece(piece_type, square_index)
+                squares[square_index].set_piece(piece_obj)
         return squares
 
     @classmethod

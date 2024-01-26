@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from history.move import Move
 from singleton import Singleton
@@ -8,6 +8,7 @@ from history.move_handler import MoveHandler
 class MoveManager(Singleton):  # TODO: Command pattern
     __m_index: int = 0
     __moves: List[Move] = []
+    __attacked_piece_map: Dict = {}
 
     def add_move(self, move: Move):
         # Delete all moves from current index to the end

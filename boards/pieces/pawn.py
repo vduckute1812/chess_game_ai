@@ -23,7 +23,7 @@ class Pawn(Piece):
         self.update_legal_directions()
         normal_moves = self.get_legal_moves(pawn_direction, all_indexes)
         attack_moves = self.get_attack_moves(pawn_direction, opponent_indexes)
-        return normal_moves + attack_moves, attack_moves
+        return normal_moves, attack_moves
 
     def update_legal_directions(self):
         if self._first_move and self.SECOND_STEP_MOVE not in self._legal_directions:

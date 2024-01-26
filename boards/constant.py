@@ -1,3 +1,4 @@
+
 class Color:
     WHITE = 1
     BLACK = 2
@@ -42,3 +43,5 @@ class Alliance:
     @classmethod
     def is_opposite(cls, alliance1: int, alliance2: int) -> bool:
         return not cls.is_same(alliance1, alliance2)
+
+
