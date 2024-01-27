@@ -4,6 +4,7 @@ from game.game_state import GameState
 
 
 class StandardBoardEvaluator:
+    # TODO: Handle here to make AI more smart
     @classmethod
     def evaluate(cls, board: GameState, alliance: int,  depth: int = 0) -> float:
         """

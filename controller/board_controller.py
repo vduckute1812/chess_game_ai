@@ -1,5 +1,7 @@
 from multiprocessing import Queue, Process
 from typing import Optional, Tuple, List, Dict
+
+from ai_engine.minimax.minimax import Minimax
 from boards.constant import Alliance
 from controller.constant import MoveType
 from history.move import Move
@@ -50,7 +52,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
     def change_turn(self):
         self._game_state.turn = Alliance.WHITE if Alliance.is_black(self._game_state.turn) else Alliance.BLACK
 
-    def _is_ai_turn(self) -> bool:
+    def is_ai_turn(self) -> bool:
         return self._game_state.ai_player[self._game_state.turn]
 
     def _has_selected_piece(self):
@@ -92,29 +94,34 @@ class BoardController(Singleton):  # TODO: Bridge pattern
                 attacked_piece=attacked_piece,
             )
             Observer().send(msg=MessageType.MOVE_MADE, **move_data)
-            Observer().send(msg=MessageType.AI_MOVE)
+            self.handle_ai_turn()
             return Move(**move_data)
 
     def handle_ai_turn(self):
+        if not self.is_ai_turn():
+            return
         from history.move_handler import MoveHandler
         from history.move_mgr import MoveManager
-        return_queue = Queue()  # used to pass data between threads
-        move_finder_process = Process(target=self.generate_valid_moves, args = (self._game_state.turn, return_queue))
-        move_finder_process.start()
-        moves = return_queue.get()
-        # move_finder_process = Process(target=self.generate_valid_moves(self._game_state.turn))
-        # moves = self.generate_valid_moves(self._game_state.turn)
-        move = moves[0]
-        MoveHandler().redo(moves[0])
+        moves = self.generate_valid_moves()
+        self._game_state.ai_thinking = True
+        move = Minimax.find_best_move(self._board.get_board_config(), moves, self._game_state.turn)
+        MoveHandler().redo(move)
         MoveManager().add_move(move)
+        self._game_state.ai_thinking = False
+
+    def is_ai_thinking(self):
+        return self._game_state.ai_thinking
 
     def update_highlight_tiles(self, highlight: bool = False):
-        if not self._is_ai_turn():
+        if not self.is_ai_thinking():
             Observer().send(msg=MessageType.SQUARE_HIGHLIGHT, piece=self._selected_piece, highlight=highlight)
 
     def get_valid_moves(self, piece: Piece) -> Tuple[List[int], List[int]]:
         w_ids, b_ids = self._board.get_piece_indexes(piece)
         return piece.get_valid_moves(w_ids, b_ids)
 
-    def generate_valid_moves(self, alliance: int) -> List[Move]:
-        return self._board.generate_valid_moves(alliance)
+    def generate_valid_moves(self) -> List[Move]:
+        return self._board.generate_valid_moves(self._game_state.turn)
+
+    def get_board_config(self) -> Dict[int, List[int]]:
+        return self._board.get_board_config()

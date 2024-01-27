@@ -6,6 +6,7 @@ from boards.constant import Alliance
 @dataclass
 class GameState:
     turn: int = Alliance.UNKNOWN
+    ai_thinking: bool = False
     running: bool = False
     check_mate: bool = False
     ai_player: Dict = None

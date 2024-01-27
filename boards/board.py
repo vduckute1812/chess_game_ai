@@ -93,7 +93,7 @@ class Board(Listener):
         if piece_type := kwargs.get("moved_piece_type"):
             indexes = self._board_config.get(piece_type, [])
             indexes.remove(moved_index)
-            target_index and indexes.append(target_index)
+            isinstance(target_index, int) and indexes.append(target_index)
         if attacked_piece := kwargs.get("attacked_piece"):
             indexes = self._board_config.get(attacked_piece.piece_type, [])
             indexes.append(moved_index) if is_undo else indexes.remove(target_index)

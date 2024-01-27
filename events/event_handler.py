@@ -20,5 +20,7 @@ class EventHandler(BaseEvent):
                 BoardController().force_quit()
             case EventHandlerType.UNDO:
                 MoveManager().undo()
+                BoardController().is_ai_turn() and MoveManager().undo()
             case EventHandlerType.REDO:
                 MoveManager().redo()
+                BoardController().is_ai_turn() and MoveManager().redo()
