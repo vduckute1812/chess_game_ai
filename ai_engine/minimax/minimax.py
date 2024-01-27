@@ -47,6 +47,7 @@ class Minimax(Singleton):
             next_moves = BoardController().generate_valid_moves()
             board_config = BoardController().get_board_config()
             score = -cls.negamax_alpha_beta(board_config, next_moves, depth - 1, -beta, -alpha, -turn_multiplier)
+            print(score)
             if score > max_score:
                 max_score = score
                 if depth == DEPTH:

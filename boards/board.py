@@ -1,7 +1,5 @@
 from typing import Optional, List, Dict, Tuple
-
 import pygame
-
 from boards.constant import WINDOW_SIZE, Alliance
 from boards.square import Square
 from controller.constant import MoveType
@@ -119,7 +117,8 @@ class Board(Listener):
                     moved_index=piece.square_index,
                     target_index=move_idx,
                     moved_piece_type=piece.piece_type,
-                    attacked_piece=attacked_piece
+                    attacked_piece=attacked_piece,
+                    first_move=piece.first_move,
                 )
             )
         return valid_moves

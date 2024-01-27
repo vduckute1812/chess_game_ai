@@ -24,6 +24,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
         self._game_state = GameState(turn=Alliance.WHITE, running=True)
         self._game_state.set_player_config()
         Observer().send(msg=MessageType.INIT_BOARD)
+        self.handle_ai_turn()
 
     def handle_board_event(self, mx: int, my: int) -> Optional[Move]:
         row, col = Utils.coord_to_position(mx, my)
@@ -108,6 +109,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
         MoveHandler().redo(move)
         MoveManager().add_move(move)
         self._game_state.ai_thinking = False
+        self.handle_ai_turn()
 
     def is_ai_thinking(self):
         return self._game_state.ai_thinking
