@@ -43,7 +43,7 @@ class Piece:
     def _is_valid_index(current_index, target_index) -> bool:
         step_row = abs(target_index // 8 - current_index // 8)
         step_col = abs(target_index % 8 - current_index % 8)
-        return 0 < target_index < 64 and step_row <= 2 and step_col <= 2
+        return 0 <= target_index < 64 and step_row <= 2 and step_col <= 2
 
     def get_valid_moves(self, alliance_indexes: List[int], opponent_indexes: List[int]) -> Tuple[List[int], List[int]]:
         normal_moves, attack_moves = [], []

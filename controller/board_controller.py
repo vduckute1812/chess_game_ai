@@ -42,10 +42,27 @@ class BoardController(Singleton):  # TODO: Bridge pattern
     def force_quit(self):
         self._game_state.running = False
 
-    def make_move(self, moved_coord: int, target_coord: int, first_move=False, attacked_piece: Optional[Piece] = None):
+    def make_move(self, move: Move, is_undo: bool = False, is_ai: bool = False):
+        if is_undo:
+            moved_coord = move.target_index
+            target_coord = move.moved_index
+            first_move = move.first_move
+        else:
+            moved_coord = move.moved_index
+            target_coord = move.target_index
+            first_move = False
         self._selected_piece = self._board.get_piece(moved_coord)
         self._selected_piece and self._move(target_coord, first_move=first_move)
-        attacked_piece and self._set_piece(attacked_piece, moved_coord)
+        is_undo and move.attacked_piece and self._set_piece(move.attacked_piece, moved_coord)
+        Observer().send(
+            msg=MessageType.MOVE_MADE,
+            moved_index=moved_coord,
+            target_index=target_coord,
+            moved_piece_type=move.moved_piece_type,
+            attacked_piece=move.attacked_piece,
+            is_undo=is_undo,
+            is_ai=is_ai,
+        )
 
     def _set_piece(self, piece: Optional[Piece], index: int):
         self._board.set_piece(piece, index)
@@ -115,7 +132,7 @@ class BoardController(Singleton):  # TODO: Bridge pattern
         return self._game_state.ai_thinking
 
     def update_highlight_tiles(self, highlight: bool = False):
-        if not self.is_ai_thinking():
+        if not self.is_ai_turn():
             Observer().send(msg=MessageType.SQUARE_HIGHLIGHT, piece=self._selected_piece, highlight=highlight)
 
     def get_valid_moves(self, piece: Piece) -> Tuple[List[int], List[int]]:
